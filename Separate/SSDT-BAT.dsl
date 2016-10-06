@@ -1,8 +1,12 @@
+// Created by : Intruder16
+// Credits : RehabMan
+
 // Battery Fixes
 
-DefinitionBlock("", "SSDT", 2, "hack", "BAT", 0)
+DefinitionBlock("", "SSDT", 2, "Y510p", "BAT", 0)
 {
     // Override for ACPIBatteryManager.kext
+    
     External(_SB.BAT1, DeviceObj)
     Name(_SB.BAT1.RMCF, Package()
     {

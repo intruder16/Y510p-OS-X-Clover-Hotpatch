@@ -1,6 +1,9 @@
+// Created by : Intruder16
+// Credits : RehabMan
+
 // Fix unsupported 8-series LPC devices
 
-DefinitionBlock("", "SSDT", 2, "hack", "LPC", 0)
+DefinitionBlock("", "SSDT", 2, "Y510p", "LPC", 0)
 {
     External(_SB.PCI0.LPCB, DeviceObj)
 

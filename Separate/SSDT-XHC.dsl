@@ -1,6 +1,9 @@
+// Created by : Intruder16
+// Credits : RehabMan
+
 // Automatic injection of XHC properties
 
-DefinitionBlock("", "SSDT", 2, "hack", "XHC", 0)
+DefinitionBlock("", "SSDT", 2, "Y510p", "XHC", 0)
 {
     External(_SB.PCI0.XHC, DeviceObj)
     
@@ -19,7 +22,8 @@ DefinitionBlock("", "SSDT", 2, "hack", "XHC", 0)
                 "AAPL,current-extra-in-sleep", Buffer() { 0x40, 0x06, 0, 0, },
                 "AAPL,max-port-current-in-sleep", Buffer() { 0x34, 0x08, 0, 0 },
             }
-            // force USB2 on XHC if EHCI is disabled
+            // Force USB2 on XHC if EHCI is disabled
+            
             If (CondRefOf(\_SB.PCI0.RMD2))
             {
                 CreateDWordField(DerefOf(Local0[1]), Zero, PR2F)

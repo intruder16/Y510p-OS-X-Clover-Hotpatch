@@ -1,6 +1,9 @@
+// Created by : Intruder16
+// Credits : RehabMan
+
 // Automatic injection of IGPU properties
 
-DefinitionBlock("", "SSDT", 2, "hack", "IGPU", 0)
+DefinitionBlock("", "SSDT", 2, "Y510p", "IGPU", 0)
 {
     External(_SB.PCI0.IGPU, DeviceObj)
 

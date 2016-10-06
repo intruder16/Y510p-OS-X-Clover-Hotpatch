@@ -1,6 +1,9 @@
+// Created by : Intruder16
+// Credits : RehabMan
+
 // Replace Q11 & Q12 key functions for brightness
 
-DefinitionBlock("", "SSDT", 2, "hack", "B-KEYS", 0)
+DefinitionBlock("", "SSDT", 2, "Y510p", "B-KEYS", 0)
 {
     Device (RMKB)
     {
@@ -24,5 +27,4 @@ DefinitionBlock("", "SSDT", 2, "hack", "B-KEYS", 0)
         }
     }
 }
-
 //EOF

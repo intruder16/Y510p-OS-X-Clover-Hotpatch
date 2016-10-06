@@ -1,6 +1,9 @@
+// Created by : Intruder16
+// Credits : RehabMan
+
 // Override for host defined _OSI to handle "Darwin"...
 
-DefinitionBlock("", "SSDT", 2, "hack", "XOSI", 0)
+DefinitionBlock("", "SSDT", 2, "Y510p", "XOSI", 0)
 {
     // All _OSI calls in DSDT are routed to XOSI...
     // XOSI simulates "Windows 2012" (which is Windows 8)

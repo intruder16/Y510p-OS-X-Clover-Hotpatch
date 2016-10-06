@@ -1,13 +1,14 @@
+// Created by : Intruder16
+// Credits : RehabMan
+
 // Adding SMBUS device
 
-DefinitionBlock("", "SSDT", 2, "hack", "SMBUS", 0)
+DefinitionBlock("", "SSDT", 2, "Y510p", "SMBUS", 0)
 {
     External(_SB.PCI0, DeviceObj)
     
     Scope(_SB.PCI0)
     {
-        // Add SMBBUS Device
-
         Device(SBUS.BUS0)
         {
             Name(_CID, "smbus")

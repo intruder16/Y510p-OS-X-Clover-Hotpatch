@@ -1,6 +1,10 @@
-// Automatic injection of EH02 properties
+// Created by : Intruder16
+// Credits : RehabMan
 
-DefinitionBlock("", "SSDT", 2, "hack", "EH02", 0)
+// Automatic injection of EH02 properties
+// Not needed since we disabled EH02
+
+DefinitionBlock("", "SSDT", 2, "Y510p", "EH02", 0)
 {
     // inject properties for EH02
     

@@ -109,6 +109,18 @@
 				</dict>
 				<dict>
 					<key>Comment</key>
+					<string>Change (XSEL,0,S) to XXEL, SSDT-XSEL</string>
+					<key>Find</key>
+					<data>
+					WFNFTAg=
+					</data>
+					<key>Replace</key>
+					<data>
+					WFhFTAg=
+					</data>
+				</dict>
+				<dict>
+					<key>Comment</key>
 					<string>change (GPRW,2,N) to XPRW, SSDT-PRW.aml</string>
 					<key>Find</key>
 					<data>

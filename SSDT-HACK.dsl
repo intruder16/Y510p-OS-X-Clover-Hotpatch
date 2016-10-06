@@ -1,10 +1,10 @@
 // Creating one All-In-One SSDT for hacks, no need to use SortedOrder
-// There are of course seperate SSDT's in "seperate" folder NOTE : Use SortedOrder with this.
+// There are of course seperate SSDT's in "seperate" folder NOTE : Use SortedOrder with that.
 
-// Created by : Intruder-16
+// Created by : Intruder16
 // Credits : RehabMan
 
-DefinitionBlock ("", "SSDT", 2, "hack", "hack", 0)
+DefinitionBlock ("", "SSDT", 2, "Y510p", "hack", 0)
 {
     External(_SB.PCI0, DeviceObj)
     External(_SB.PCI0.LPCB, DeviceObj)
@@ -36,6 +36,18 @@ DefinitionBlock ("", "SSDT", 2, "hack", "hack", 0)
 //
 // USB related
 //
+
+    // Disabling XSEL
+    
+    External(_SB.PCI0.XHC, DeviceObj)
+
+    // In DSDT, native XSEL is renamed ZSEL
+    // As a result, calls to it land here.
+    Method(_SB.PCI0.XHC.XSEL)
+    {
+        // do nothing
+    }
+    
     // For solving instant wake by hooking GPRW
     
     Method(GPRW, 2)
@@ -45,49 +57,129 @@ DefinitionBlock ("", "SSDT", 2, "hack", "hack", 0)
         External(\XPRW, MethodObj)
         Return (XPRW(Arg0, Arg1))
     }
-        
-    // Inject properties for EC01
+
+    // USBInjectAll configuration/override
     
-    External(_SB.PCI0.EH01, DeviceObj)
-    
-    If (CondRefOf(_SB.PCI0.EH01))
+    Device(UIAC)
     {
-        Method(_SB.PCI0.EH01._DSM, 4)
+        Name(_HID, "UIA00000")
+
+        Name(RMCF, Package()
         {
-            If (!Arg2) { Return (Buffer() { 0x03 } ) }
-            Return (Package()
+            "8086_8c31", Package()
             {
-                "subsystem-id", Buffer() { 0x70, 0x72, 0x00, 0x00 },
-                "subsystem-vendor-id", Buffer() { 0x86, 0x80, 0x00, 0x00 },
-                "AAPL,current-available", Buffer() { 0x34, 0x08, 0, 0 },
-                "AAPL,current-extra", Buffer() { 0x98, 0x08, 0, 0, },
-                "AAPL,current-extra-in-sleep", Buffer() { 0x40, 0x06, 0, 0, },
-                "AAPL,max-port-current-in-sleep", Buffer() { 0x34, 0x08, 0, 0 },
-            })
-        }
+                //"port-count", Buffer() { 21, 0, 0, 0 },
+                "ports", Package()
+                {
+                    "HS01", Package()    // Camera
+                    {
+                        "UsbConnector", 255,
+                        "port", Buffer() { 0x01, 0, 0, 0 },
+                    },
+                    "HS02", Package()    // USB 2.0 right
+                    {
+                        "UsbConnector", 0,
+                        "port", Buffer() { 0x02, 0, 0, 0 },
+                    },
+                    "HS03", Package()    // HS component of USB 3.0 near left
+                    {
+                        "UsbConnector", 3,
+                        "port", Buffer() { 0x03, 0, 0, 0 },
+                    },
+                    "HS04", Package()    // HS component of USB 3.0 far left
+                    {
+                        "UsbConnector", 3,
+                        "port", Buffer() { 0x04, 0, 0, 0 },
+                    },
+                    "HS07", Package()    // Bluetooth 
+                    {
+                        "UsbConnector", 255,
+                        "port", Buffer() { 0x07, 0, 0, 0 },
+                    },
+                    "SSP2", Package()    // USB 3.0 near left
+                    {
+                        "UsbConnector", 3,
+                        "port", Buffer() { 0x11, 0, 0, 0 },
+                    },
+                    "SSP3", Package()    // USB 3.0 far left
+                    {
+                        "UsbConnector", 3,
+                        "port", Buffer() { 0x12, 0, 0, 0 },
+                    },
+                    "SSP4", Package()    // Card Reader
+                    {
+                        "UsbConnector", 255,
+                        "port", Buffer() { 0x13, 0, 0, 0 },
+                    },
+                },
+            },
+        })
     }
     
-    // Inject properties for EH02
-    
+    // Disabling EHCI #1 (and EHCI #2)
+
+    External(_SB.PCI0.EH01, DeviceObj)
     External(_SB.PCI0.EH02, DeviceObj)
     
-    If (CondRefOf(_SB.PCI0.EH02))
+    Scope(_SB.PCI0)
     {
-        Method(_SB.PCI0.EH02._DSM, 4)
+        // registers needed for disabling EHC#1
+        Scope(EH01)
         {
-            If (!Arg2) { Return (Buffer() { 0x03 } ) }
-            Return (Package()
+            OperationRegion(PSTS, PCI_Config, 0x54, 2)
+            Field(PSTS, WordAcc, NoLock, Preserve)
             {
-                "subsystem-id", Buffer() { 0x70, 0x72, 0x00, 0x00 },
-                "subsystem-vendor-id", Buffer() { 0x86, 0x80, 0x00, 0x00 },
-                "AAPL,current-available", Buffer() { 0x34, 0x08, 0, 0 },
-                "AAPL,current-extra", Buffer() { 0x98, 0x08, 0, 0, },
-                "AAPL,current-extra-in-sleep", Buffer() { 0x40, 0x06, 0, 0, },
-                "AAPL,max-port-current-in-sleep", Buffer() { 0x34, 0x08, 0, 0 },
-            })
+                PSTE, 2  // bits 2:0 are power state
+            }
+        }
+        // registers needed for disabling EHC#1
+        Scope(EH02)
+        {
+            OperationRegion(PSTS, PCI_Config, 0x54, 2)
+            Field(PSTS, WordAcc, NoLock, Preserve)
+            {
+                PSTE, 2  // bits 2:0 are power state
+            }
+        }
+        Scope(LPCB)
+        {
+            OperationRegion(RMLP, PCI_Config, 0xF0, 4)
+            Field(RMLP, DWordAcc, NoLock, Preserve)
+            {
+                RCB1, 32, // Root Complex Base Address
+            }
+            // address is in bits 31:14
+            OperationRegion(FDM1, SystemMemory, (RCB1 & Not((1<<14)-1)) + 0x3418, 4)
+            Field(FDM1, DWordAcc, NoLock, Preserve)
+            {
+                ,13,    // skip first 13 bits
+                FDE2,1, // should be bit 13 (0-based) (FD EHCI#2)
+                ,1,
+                FDE1,1, // should be bit 15 (0-based) (FD EHCI#1)
+            }
+        }
+        
+        Device(RMD1)
+        {
+            //Name(_ADR, 0)
+            Name(_HID, "RMD10000")
+            Method(_INI)
+            {
+                // disable EHCI#1
+                // put EHCI#1 in D3hot (sleep mode)
+                ^^EH01.PSTE = 3
+                // disable EHCI#1 PCI space
+                ^^LPCB.FDE1 = 1
+
+                // disable EHCI#2
+                // put EHCI#2 in D3hot (sleep mode)
+                ^^EH02.PSTE = 3
+                // disable EHCI#2 PCI space
+                ^^LPCB.FDE2 = 1
+            }
         }
     }
-    
+
     // Inject properties for XHC
     
     External(_SB.PCI0.XHC, DeviceObj)
@@ -121,6 +213,7 @@ DefinitionBlock ("", "SSDT", 2, "hack", "hack", 0)
 //
 // Backlight control
 //
+
     Device (_SB.PCI0.IGPU.PNLF)
     {
         Name(_ADR, Zero)
@@ -167,7 +260,7 @@ DefinitionBlock ("", "SSDT", 2, "hack", "hack", 0)
             Notify (RMKB, 0x124D)
         }
     }
-    
+
 //
 // Standard Additions/Injections/Fixes
 //
@@ -283,7 +376,7 @@ DefinitionBlock ("", "SSDT", 2, "hack", "hack", 0)
             Return (Package () { "compatible", "pci8086,9c43" })
         }
     }
-    
+
 //
 // Battery Status
 //

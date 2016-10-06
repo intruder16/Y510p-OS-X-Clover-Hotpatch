@@ -1,6 +1,9 @@
+// Created by : Intruder16
+// Credits : RehabMan
+
 // Add the missing IMEI device
 
-DefinitionBlock("", "SSDT", 2, "hack", "IMEI", 0)
+DefinitionBlock("", "SSDT", 2, "Y510p", "IMEI", 0)
 {
     External(_SB.PCI0, DeviceObj)
 
@@ -12,5 +15,4 @@ DefinitionBlock("", "SSDT", 2, "hack", "IMEI", 0)
         }
     }
 }
-
 //EOF

@@ -1,10 +1,9 @@
+// Created by : Intruder16
+// Credits : RehabMan
+
 // Adding PNLF device for IntelBacklight.kext & Disable Nvidia graphics
 
-//REVIEW: come up with table driven effort here...
-#define SANDYIVY_PWMMAX 0x710
-#define HASWELL_PWMMAX 0xad9
-
-DefinitionBlock("", "SSDT", 2, "hack", "PNLF", 0)
+DefinitionBlock("", "SSDT", 2, "Y510p", "PNLF", 0)
 {
     Device (_SB.PCI0.IGPU.PNLF)
     {
@@ -19,11 +18,12 @@ DefinitionBlock("", "SSDT", 2, "hack", "PNLF", 0)
         })
         Method(_INI)
         {
-            // disable discrete graphics (Nvidia) if it is present
-            External(\_SB.PCI0.RP05.PEGP._OFF, MethodObj)
-            If (CondRefOf(\_SB.PCI0.RP05.PEGP._OFF))
+            // Disable discrete graphics (Nvidia) if it is present
+            
+            External(\_SB.PCI0.PEG0.PEGP._OFF, MethodObj)
+            If (CondRefOf(\_SB.PCI0.PEG0.PEGP._OFF))
             {
-                \_SB.PCI0.RP05.PEGP._OFF()
+                \_SB.PCI0.PEG0.PEGP._OFF()
             }
         }
     }
